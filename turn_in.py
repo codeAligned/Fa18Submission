@@ -16,27 +16,49 @@ def files_to_copy(assignment):
 	if assignment == 'hw1':
 		return ['hw1.sql']
 	elif assignment == 'hw2':
-		return ['BPlusTree.java', 'BPlusNode.java', 'InnerNode.java', 'LeafNode.java']
+		return ['src/main/java/edu/berkeley/cs186/database/index/BPlusTree.java', \
+		'src/main/java/edu/berkeley/cs186/database/index/BPlusNode.java', \
+		'src/main/java/edu/berkeley/cs186/database/index/InnerNode.java', \
+		'src/main/java/edu/berkeley/cs186/database/index/LeafNode.java']
+	elif assignment == 'hw3':
+		return ['src/main/java/edu/berkeley/cs186/database/table/Table.java', \
+		'src/main/java/edu/berkeley/cs186/database/query/PNLJOperator.java', \
+		'src/main/java/edu/berkeley/cs186/database/query/BNLJOperator.java', \
+		'src/main/java/edu/berkeley/cs186/database/query/SortOperator.java', \
+		'src/main/java/edu/berkeley/cs186/database/query/SortMergeOperator.java']
 	else:
 		print("Error: Please check your argument for --assignment")
 		exit()
 
+def get_path(hw_file):
+	index = hw_file.rfind('/')
+	if index == -1:
+		return ""
+	return hw_file[:index]
+
+def get_dirs(hw_files):
+	dirs = set()
+	for hw in hw_files:
+		dirs.add(get_path(hw))
+	return dirs
+
+def create_hw_dirs(assignment, dirs):
+	for d in dirs:
+		try:
+			tmp_hw_path = tempdir + '/' + assignment + '/' + d 
+			os.makedirs(tmp_hw_path)
+		except OSError:
+			print("Error: Creating directory %s failed" % path)
+			exit()
+	return tempdir + '/' + assignment
+
 def copy_file(filename, hw_path, tmp_hw_path):
 	student_file_path = hw_path + '/' + filename
+	tmp_student_file_path = tmp_hw_path + '/' + get_path(filename)
 	if not os.path.isfile(student_file_path):
-		print("Error: could not find file at " + student_file_path)
+		print("Error: could not find file at %s" % student_file_path)
 		exit()
-	shutil.copy(student_file_path, tmp_hw_path)
-
-def create_hw_dir(assignment, base_path):
-	try:
-		tmp_hw_path = tempdir + '/' + assignment + base_path#src/main/java/edu/berkeley/cs186/database/index/'
-		os.makedirs(tmp_hw_path)
-		print(tmp_hw_path)
-	except OSError:
-		print("Error: Creating directory %s failed" % path)
-		exit()
-	return tempdir + '/' + assignment
+	shutil.copy(student_file_path, tmp_student_file_path)
 
 def create_submission_gpg(student_id, tmp_hw_path):
 	# Create submission_info.txt with student id info
@@ -74,14 +96,11 @@ if __name__ == '__main__':
 	check_student_id(args.student_id)
 
 	with tempfile.TemporaryDirectory(dir='/tmp/') as tempdir:
-		base_path = ""
-		if args.assignment == 'hw2':
-			base_path = '/src/main/java/edu/berkeley/cs186/database/index'
-
 		hw_files = files_to_copy(args.assignment)
-		tmp_hw_path = create_hw_dir(args.assignment, base_path)
+		dirs = get_dirs(hw_files)
+		tmp_hw_path = create_hw_dirs(args.assignment, dirs)
 		for filename in hw_files:
-			copy_file(filename, os.getcwd() + base_path, tmp_hw_path + base_path)
+			copy_file(filename, os.getcwd(), tmp_hw_path)
 
 		create_submission_gpg(args.student_id, tmp_hw_path)
 
