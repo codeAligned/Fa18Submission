@@ -26,6 +26,9 @@ def files_to_copy(assignment):
 		'src/main/java/edu/berkeley/cs186/database/query/BNLJOperator.java', \
 		'src/main/java/edu/berkeley/cs186/database/query/SortOperator.java', \
 		'src/main/java/edu/berkeley/cs186/database/query/SortMergeOperator.java']
+	elif assignment == 'hw4':
+		return ['src/main/java/edu/berkeley/cs186/database/query/QueryPlan.java', \
+		'src/main/java/edu/berkeley/cs186/database/table/stats/Histogram.java']
 	else:
 		print("Error: Please check your argument for --assignment")
 		exit()
