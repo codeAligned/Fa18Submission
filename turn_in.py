@@ -29,6 +29,16 @@ def files_to_copy(assignment):
 	elif assignment == 'hw4':
 		return ['src/main/java/edu/berkeley/cs186/database/query/QueryPlan.java', \
 		'src/main/java/edu/berkeley/cs186/database/table/stats/Histogram.java']
+	elif assignment == 'hw5':
+		return ['src/main/java/edu/berkeley/cs186/database/concurrency/LockType.java',
+        'src/main/java/edu/berkeley/cs186/database/concurrency/LockManager.java',
+        'src/main/java/edu/berkeley/cs186/database/concurrency/LockContext.java',
+        'src/main/java/edu/berkeley/cs186/database/concurrency/LockUtil.java',
+        'src/main/java/edu/berkeley/cs186/database/index/BPlusTree.java',
+        'src/main/java/edu/berkeley/cs186/database/io/Page.java',
+        'src/main/java/edu/berkeley/cs186/database/io/PageAllocator.java',
+        'src/main/java/edu/berkeley/cs186/database/table/Table.java',
+        'src/main/java/edu/berkeley/cs186/database/Database.java']
 	else:
 		print("Error: Please check your argument for --assignment")
 		exit()
@@ -49,9 +59,10 @@ def create_hw_dirs(assignment, dirs):
 	for d in dirs:
 		try:
 			tmp_hw_path = tempdir + '/' + assignment + '/' + d 
-			os.makedirs(tmp_hw_path)
+			if not os.path.isdir(tmp_hw_path):
+				os.makedirs(tmp_hw_path)
 		except OSError:
-			print("Error: Creating directory %s failed" % path)
+			print("Error: Creating directory %s failed" % tmp_hw_path)
 			exit()
 	return tempdir + '/' + assignment
 
